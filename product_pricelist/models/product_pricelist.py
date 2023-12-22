@@ -29,8 +29,12 @@ class ProductPricelist(models.Model):
                     product_id).with_context(pricelist=rec.id).price
                 rec.price = price
             elif template_id:
-                price = self.env['product.template'].browse(
-                    template_id).with_context(pricelist=rec.id).price
+                # el campo price del modelo product.pricelist es definido por este módulo
+                # osea, solo se usa acá. entonces solo puede afectar a la vista de precios
+                # que se muestran en el producto
+                producto = self.env['product.template'].browse(template_id)
+                price = self.env['product.product'].browse(
+                    producto.product_variant_id.id).with_context(pricelist=rec.id).price
                 rec.price = price
             else:
                 rec.price = 0.0
